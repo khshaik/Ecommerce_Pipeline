@@ -1,0 +1,28 @@
+[PRODUCER] ========== POLL #151 (2025-12-07 07:45:46) ==========
+[PRODUCER] Last processed state: 2025-12-07 07:39:14.108942|385
+[PRODUCER] CDC Query: (
+        SELECT * 
+        FROM orders
+        WHERE (created_at > '2025-12-07 07:39:14.108942')
+           OR (created_at = '2025-12-07 07:39:14.108942' AND order_id > 385)
+        ORDER BY created_at ASC, order_id ASC
+        LIMIT 1000
+    ) AS cdc_query
+[PRODUCER] Reading from PostgreSQL...
+[PRODUCER] Fetched 3 new records
+[PRODUCER] Converted 3 rows to JSON format
+
+[PRODUCER] Records being pushed to Kafka:
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|value                                                                                                                                                                                           |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|{"order_id":386,"customer_name":"Test Customer 1","restaurant_name":"Test Restaurant 1","item":"Test Item 1","amount":371.54,"order_status":"DELIVERED","created_at":"2025-12-07T07:45:41.637Z"}|
+|{"order_id":387,"customer_name":"Test Customer 2","restaurant_name":"Test Restaurant 2","item":"Test Item 2","amount":62.08,"order_status":"PLACED","created_at":"2025-12-07T07:45:41.637Z"}    |
+|{"order_id":388,"customer_name":"Test Customer 3","restaurant_name":"Test Restaurant 3","item":"Test Item 3","amount":417.78,"order_status":"CANCELLED","created_at":"2025-12-07T07:45:41.637Z"}|
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+[PRODUCER] Publishing 3 messages to Kafka topic: 2025em1100102_food_orders_raw
+[PRODUCER] Successfully published to Kafka topic: 2025em1100102_food_orders_raw
+[PRODUCER] Updated last processed state: 2025-12-07 07:45:41.637356|388
+[PRODUCER] STATE UPDATED: 2025-12-07 07:45:41.637356|388
+[PRODUCER] Sleeping for 5 seconds...

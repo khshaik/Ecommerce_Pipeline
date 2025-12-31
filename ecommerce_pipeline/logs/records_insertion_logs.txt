@@ -1,0 +1,94 @@
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 %   docker exec -it postgres psql -U student -d food_delivery_db \
+  -c "SELECT order_id, customer_name, restaurant_name, item, amount, order_status, created_at FROM orders ORDER BY order_id DESC LIMIT 5;"
+ order_id |  customer_name  |  restaurant_name  |    item     | amount | order_status |         created_at         
+----------+-----------------+-------------------+-------------+--------+--------------+----------------------------
+      375 | Test Customer 2 | Test Restaurant 2 | Test Item 2 | 492.47 | DELIVERED    | 2025-12-07 07:31:47.448893
+      374 | Test Customer 1 | Test Restaurant 1 | Test Item 1 | 456.61 | PLACED       | 2025-12-07 07:31:47.448893
+      373 | Test Customer 2 | Test Restaurant 2 | Test Item 2 | 141.64 | DELIVERED    | 2025-12-07 07:28:42.559781
+      372 | Test Customer 1 | Test Restaurant 1 | Test Item 1 | 272.20 | CANCELLED    | 2025-12-07 07:28:42.559781
+      371 | Test Customer 2 | Test Restaurant 2 | Test Item 2 | 325.16 | PLACED       | 2025-12-07 07:14:35.537667
+(5 rows)
+
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % docker exec spark-runner python3 scripts/insert_test_orders.py \
+  --host postgres --port 5432 --database food_delivery_db \                                                                               
+  --user student --password student123 --count 5
+================================================================================
+TEST DATA INSERTION UTILITY
+================================================================================
+[INSERT] Connecting to PostgreSQL at postgres:5432/food_delivery_db...
+[INSERT] Connection successful
+[INSERT] Generating 5 test records...
+[INSERT] Inserting 5 records...
+[INSERT] Successfully inserted 5 records
+[INSERT] Inserted Order IDs: [376, 377, 378, 379, 380]
+[INSERT] Total records in orders table: 26
+
+[INSERT] Recently inserted records:
+  Order #380: Test Customer 5 | $474.56 | PLACED | 2025-12-07 07:37:13.141231
+  Order #379: Test Customer 4 | $195.79 | CANCELLED | 2025-12-07 07:37:13.141231
+  Order #378: Test Customer 3 | $72.82 | CANCELLED | 2025-12-07 07:37:13.141231
+  Order #377: Test Customer 2 | $494.76 | PLACED | 2025-12-07 07:37:13.141231
+  Order #376: Test Customer 1 | $122.19 | CANCELLED | 2025-12-07 07:37:13.141231
+
+[INSERT] ✓ Test data inserted successfully
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % clear
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % docker exec spark-runner python3 scripts/insert_test_orders.py \
+  --host postgres --port 5432 --database food_delivery_db \
+  --user student --password student123 --count 3
+================================================================================
+TEST DATA INSERTION UTILITY
+================================================================================
+[INSERT] Connecting to PostgreSQL at postgres:5432/food_delivery_db...
+[INSERT] Connection successful
+[INSERT] Generating 3 test records...
+[INSERT] Inserting 3 records...
+[INSERT] Successfully inserted 3 records
+[INSERT] Inserted Order IDs: [381, 382, 383]
+[INSERT] Total records in orders table: 29
+
+[INSERT] Recently inserted records:
+  Order #383: Test Customer 3 | $360.06 | PREPARING | 2025-12-07 07:38:49.765493
+  Order #382: Test Customer 2 | $85.30 | PREPARING | 2025-12-07 07:38:49.765493
+  Order #381: Test Customer 1 | $191.76 | CANCELLED | 2025-12-07 07:38:49.765493
+
+[INSERT] ✓ Test data inserted successfully
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % docker exec spark-runner python3 scripts/insert_test_orders.py \
+  --host postgres --port 5432 --database food_delivery_db \
+  --user student --password student123 --count 2
+================================================================================
+TEST DATA INSERTION UTILITY
+================================================================================
+[INSERT] Connecting to PostgreSQL at postgres:5432/food_delivery_db...
+[INSERT] Connection successful
+[INSERT] Generating 2 test records...
+[INSERT] Inserting 2 records...
+[INSERT] Successfully inserted 2 records
+[INSERT] Inserted Order IDs: [384, 385]
+[INSERT] Total records in orders table: 31
+
+[INSERT] Recently inserted records:
+  Order #385: Test Customer 2 | $123.09 | PREPARING | 2025-12-07 07:39:14.108942
+  Order #384: Test Customer 1 | $231.14 | PREPARING | 2025-12-07 07:39:14.108942
+
+[INSERT] ✓ Test data inserted successfully
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % docker exec spark-runner python3 scripts/insert_test_orders.py \
+  --host postgres --port 5432 --database food_delivery_db \
+  --user student --password student123 --count 3
+================================================================================
+TEST DATA INSERTION UTILITY
+================================================================================
+[INSERT] Connecting to PostgreSQL at postgres:5432/food_delivery_db...
+[INSERT] Connection successful
+[INSERT] Generating 3 test records...
+[INSERT] Inserting 3 records...
+[INSERT] Successfully inserted 3 records
+[INSERT] Inserted Order IDs: [386, 387, 388]
+[INSERT] Total records in orders table: 34
+
+[INSERT] Recently inserted records:
+  Order #388: Test Customer 3 | $417.78 | CANCELLED | 2025-12-07 07:45:41.637356
+  Order #387: Test Customer 2 | $62.08 | PLACED | 2025-12-07 07:45:41.637356
+  Order #386: Test Customer 1 | $371.54 | DELIVERED | 2025-12-07 07:45:41.637356
+
+[INSERT] ✓ Test data inserted successfully
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % 
