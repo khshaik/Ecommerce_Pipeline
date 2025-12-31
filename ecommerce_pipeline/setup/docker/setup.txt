@@ -1,0 +1,264 @@
+Zip file containing dockerfile and docker-compose, along with an easy-to-follow README. 
+
+Refer to README.md file for setting it up
+
+----
+
+Prerequisites for the DSP Assignment
+(Everything you MUST have installed + configured before running Producer & Consumer)
+
+1. Software Requirements
+ a) Python (3.8+ or 3.10 recommended) Used for the CDC Producer & running Spark jobs.
+ b) PySpark (Spark 3.5.1) For Spark Structured Streaming.
+You must install:
+pip install pyspark==3.5.1
+ c) Apache Kafka + Zookeeper
+You need Kafka broker running locally:
+•	Zookeeper → port 2181
+•	Kafka Broker → port 9092
+Commands (depending on your system):
+zookeeper-server-start.sh config/zookeeper.properties
+kafka-server-start.sh config/server.properties
+Create topic:
+kafka-topics.sh --bootstrap-server localhost:9092 --create --topic <rollnumber>_food_orders_raw
+d) PostgreSQL
+For storing & inserting orders:
+•	PostgreSQL server
+•	pgAdmin / psql client
+Create DB:
+CREATE DATABASE food_delivery_db;
+Python PostgreSQL driver
+pip install psycopg2-binary
+______________
+2. Python Libraries Required
+Install using:
+pip install kafka-python
+pip install psycopg2-binary
+pip install pyyaml
+pip install pandas
+These libraries help with:
+•	Kafka publishing
+•	PostgreSQL reading
+•	YAML config handling
+______________
+3. Spark Requirements
+Install Spark 3.5.1
+Download from: https://spark.apache.org/downloads.html
+You must set:
+✔ SPARK_HOME
+✔ Add $SPARK_HOME/bin to PATH
+✔ Install Hadoop winutils (Windows only)
+Kafka integration package
+When running Spark:
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+This allows Spark to read Kafka streams.
+______________
+4. Data Lake Requirements
+Your datalake can be:
+Option A — Local filesystem
+Just a folder like:
+/datalake/food/<rollnumber>/output/orders
+Option B — Amazon S3 bucket
+If using S3:
+•	Install AWS CLI
+•	Configure credentials
+•	Bucket must be public read/write (as per instructor instructions)
+Spark auto-detects S3 paths like:
+s3://mybucket/food/<rollnumber>/output/orders
+______________
+5. Project Structure Requirement
+You must follow:
+<rollnumber>/food_delivery_streaming/local/
+├── db/
+├── producers/
+├── consumers/
+├── configs/
+├── scripts/
+└── README.md
+______________
+6. Config File (orders_stream.yml)
+This is mandatory — no hardcoding allowed.
+It must include:
+•	PostgreSQL connection details
+•	Kafka topic / broker
+•	Data lake output path
+•	Checkpoint path
+•	Polling interval
+•	last_processed_timestamp file path
+______________
+7. Kafka Topic Requirement
+Topic name must be:
+<rollnumber>_food_orders_raw
+______________
+8. Testing Requirements
+You MUST test:
+•	Insert 10 base records
+•	Run pipeline
+•	Insert 5 + 5 incremental records
+•	Validate:
+✔ No duplicates
+✔ Parquet files partitioned by date
+✔ Kafka messages consumed
+✔ Spark writes successfully
+______________
+Summary (Quick Checklist)
+Component	Required?	Notes
+Python 3.8+		Producer + runner scripts
+PySpark 3.5.1		Consumer job
+Kafka + Zookeeper	Real-time messaging
+PostgreSQL		Source DB
+kafka-python		Python Kafka producer
+psycopg2-binary		PostgreSQL connection
+pyyaml	        	Read config
+Spark-Kafka 0.10 connector		Needed during spark-submit
+Datalake folder/S3 bucket		Output Parquet files
+Topic <rollnumber>_food_orders_raw	Must match
+
+
+2) FULL INSTALLATION GUIDE (Windows / Mac / Linux)
+(For PostgreSQL → Kafka → Spark Structured Streaming → Datalake)
+______________
+1. Install Python 3.8+
+ Required for Producer + Spark jobs.
+Windows
+Download: https://www.python.org/downloads/windows/
+Make sure you check “Add Python to PATH”
+Mac
+Python 3 comes preinstalled. If needed:
+brew install python
+Linux (Ubuntu)
+sudo apt update
+sudo apt install python3 python3-pip
+______________
+2. Install PostgreSQL + pgAdmin
+Used for the source table (<rollnumber>_orders).
+Windows / Mac
+Download: https://www.postgresql.org/download/
+Includes pgAdmin GUI.
+Linux
+sudo apt install postgresql postgresql-contrib
+Create DB
+CREATE DATABASE food_delivery_db;
+Run orders.sql from the project later.
+______________
+3. Install Apache Kafka + Zookeeper
+Used for real-time messaging.
+______________
+Windows (Important!)
+Kafka does NOT run directly on Windows.
+Either use:
+Option A — WSL2 (recommended)
+Install WSL2 first (Ubuntu).
+Then follow Linux instructions below.
+Option B — Confluent Platform for Windows (easy)
+Download:
+https://www.confluent.io/download/
+Then run:
+confluent local services start
+______________
+Mac
+Install via Homebrew:
+brew install kafka
+brew services start zookeeper
+brew services start kafka
+______________
+Linux (Ubuntu)
+Install manually:
+sudo apt update
+wget https://downloads.apache.org/kafka/3.7.0/kafka_2.13-3.7.0.tgz
+tar -xvf kafka_2.13-3.7.0.tgz
+cd kafka_2.13-3.7.0
+Start:
+bin/zookeeper-server-start.sh config/zookeeper.properties
+bin/kafka-server-start.sh config/server.properties
+______________
+Create Kafka Topic
+(Mandatory)
+kafka-topics.sh --bootstrap-server localhost:9092 \
+--create --topic <rollnumber>_food_orders_raw \
+--partitions 1 --replication-factor 1
+______________
+4. Install Apache Spark 3.5.1
+Spark is used for the Consumer streaming job.
+Download:
+ https://spark.apache.org/downloads.html
+Choose:
+•	Spark: 3.5.1
+•	Package: Hadoop 3
+Extract and set environment variables:
+Windows (IMPORTANT)
+Install Hadoop winutils:
+https://github.com/cdarlint/winutils
+Set:
+setx SPARK_HOME "C:\spark-3.5.1-bin-hadoop3"
+setx HADOOP_HOME "C:\hadoop"
+setx PATH "%PATH%;%SPARK_HOME%\bin"
+Mac
+brew install apache-spark
+Linux
+sudo tar -xvf spark-3.5.1-bin-hadoop3.tgz -C /opt/
+export SPARK_HOME=/opt/spark-3.5.1-bin-hadoop3
+export PATH=$PATH:$SPARK_HOME/bin
+______________
+5. Install Required Python Libraries
+pip install pyspark==3.5.1
+pip install kafka-python
+pip install psycopg2-binary
+pip install pyyaml
+pip install pandas
+______________
+6. Setup Project Directory
+Your folder must look like:
+<rollnumber>/food_delivery_streaming/local/
+├── db/orders.sql
+├── producers/orders_cdc_producer.py
+├── consumers/orders_stream_consumer.py
+├── configs/orders_stream.yml
+├── scripts/*.sh
+└── README.md
+______________
+7. Configure orders_stream.yml
+Update:
+•	PostgreSQL credentials
+•	Kafka broker
+•	Output datalake path
+•	Checkpoint path
+•	last_processed_timestamp file
+______________
+8. Test PostgreSQL Connection
+Insert test rows:
+INSERT INTO <rollnumber>_orders (...);
+Check timestamps.
+______________
+ 9. Run Spark Consumer First
+Start listener:
+spark-submit \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1 \
+consumers/orders_stream_consumer.py --config configs/orders_stream.yml
+______________
+ 10. Run CDC Producer
+Start polling PostgreSQL:
+python3 producers/orders_cdc_producer.py --config configs/orders_stream.yml
+You should see:
+Published order_id=11
+Published order_id=12
+...
+______________
+11. Validate Datalake Output
+Check:
+/datalake/food/<rollnumber>/output/orders/date=2025-11-18/
+Inside, you’ll see .parquet files.
+______________
+entire pipeline works end-to-end:
+PostgreSQL ➜ Kafka ➜ Spark Streaming ➜ Parquet Datalake
+How to run:
+Terminal 1 – Zookeeper to Keep track of Kafka brokers and topics.(Mandatory)
+Terminal 2 – Kafka Broker to Kafka server that stores messages (events)(Mandatory)
+Terminal 3 – Spark Consumer to Reads Kafka messages and writes Parquet files.(Mandatory)
+Terminal 4 – Kafka Console Consumer to Debug viewer to see messages instantly(optional)
+Terminal 5 – Postgres (psql) to Insert orders into DB(Mandatory)
+Terminal 6 – Producer Script to Reads DB changes and publishes to Kafka(Mandatory)
+Terminal 7 – Python shell  used it to read Parquet files(optional)
+
+output flow
+INSERT into Postgresql -->Producer script reads DB-->Kafka receives it-->Spark consumer writes to Parquet
