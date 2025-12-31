@@ -1,0 +1,144 @@
+# ============================================================================
+# CONFIGURATION FILE: orders_stream.yml
+# ============================================================================
+# This YAML configuration centralizes all runtime parameters for the 
+# Real-Time Food Delivery Streaming Pipeline:
+#  - Producer (CDC Poller)
+#  - Consumer (Spark Structured Streaming)
+#  - External services (Postgres, Kafka)
+# 
+# Usage: Both producer and consumer scripts read this file via argparse.
+# ============================================================================
+
+postgres:
+  # PostgreSQL JDBC connection details
+  # These are used by Spark JDBC reader in both producer and consumer
+  jdbc_url : "jdbc:postgresql://127.0.0.1:5432/food_delivery_db " 
+  
+  # Host: 'postgres' for Docker Compose internal network, 'localhost' for local
+  host: postgres 
+  
+  # Port: 5432 is default PostgreSQL port
+  port: 5432
+  
+  # Database name (matches POSTGRES_DB in docker-compose.yml)
+  db: "food_delivery_db" 
+  
+  # Username (matches POSTGRES_USER in docker-compose.yml)
+  user: "student"
+  
+  # Password (matches POSTGRES_PASSWORD in docker-compose.yml)
+  password: "student123"
+  
+  # SQL query driver for Spark JDBC
+  # MySQL, PostgreSQL, etc.
+  driver: "org.postgresql.Driver"
+
+  table: 2025em1100102_orders  # To be Added
+
+kafka:
+  # Kafka broker connection details
+  
+  # 'kafka:29092' for Docker Compose internal network
+  # 'localhost:9092' for local machine 
+  brokers: "kafka:9095" 
+  
+  # Kafka topic name for raw food order events
+  # Format: <rollnumber>_food_orders_raw
+  topic: "2025em1100102_food_orders_raw"
+  
+  # Number of partitions for the topic
+  num_partitions: 3
+  
+  # Replication factor (1 for single-broker setup)
+  replication_factor: 1
+  
+  # Consumer group ID (for Spark consumer offset tracking)
+  consumer_group: "food_orders_consumer_group"
+
+streaming:
+  # Checkpoint directory for offset tracking and recovery
+  # Must be persistent across restarts to avoid data loss or duplicates
+  checkpoint_location: "/app/datalake/food/2025em1100102/checkpoints/orders"  # to store offsets
+
+  # File path to persist last processed timestamp
+  # This enables incremental CDC without duplicates
+  # Producer updates this after successfully publishing to Kafka
+  last_processed_timestamp_location: "/app/datalake/food/2025em1100102/lastprocess/orders"  # to store last processed timestamp details
+  batch_interval: 5  # seconds
+
+cdc:
+    
+  # Poll interval in seconds
+  # How frequently the producer queries PostgreSQL for new records
+  poll_interval_sec: 5
+  
+  # Maximum batch size (optional limit for query)
+  # Set to -1 for unlimited (fetch all new records)
+  batch_limit: 1000
+  
+  # Starting timestamp (used if last_ts_file doesn't exist)
+  # Format: YYYY-MM-DD HH:MM:SS
+  default_start_timestamp: "2025-11-18 00:00:00"
+
+datalake:
+  # Output path for partitioned Parquet files
+  # Partitioned by: date=YYYY-MM-DD
+  path: "/app/datalake/food/2025em1100102/output/orders"  # To be Added
+  format: "parquet"
+
+consumer:
+  # Spark Structured Streaming Consumer configuration
+  # Maximum number of offsets per microbatch trigger
+  # Helps control batch size and latency
+  maxOffsetsPerTrigger: 1000
+  
+  # Trigger interval (milliseconds) - how often to process new messages
+  # 0 means as soon as data arrives (continuous)
+  trigger_interval_ms: 5000
+  
+  # Timeout for stream (seconds) - stream runs indefinitely if not set
+  # Set to 0 to run indefinitely (used in production)
+  await_termination_timeout: 0
+
+# ============================================================================
+# Schema Definition for Orders
+# ============================================================================
+# This schema is used by both producer (JSON serialization) and consumer 
+# (JSON deserialization) to ensure consistent data types and field names.
+schema:
+  order_id: "bigint"
+  customer_name: "string"
+  restaurant_name: "string"
+  item: "string"
+  amount: "double"
+  order_status: "string"
+  created_at: "timestamp"
+
+# ============================================================================
+# Data Validation Rules (used by Consumer)
+# ============================================================================
+validation:
+  # Filter out records with null order_id
+  allow_null_order_id: false
+  
+  # Filter out records with negative amount
+  allow_negative_amount: false
+  
+  # If true, drop rows that fail validation
+  # If false, log error and skip
+  drop_invalid_rows: true
+
+# ============================================================================
+# Logging and Debugging
+# ============================================================================
+logging:
+  # Log level for Spark applications
+  # Options: INFO, DEBUG, WARN, ERROR
+  level: "INFO"
+  
+  # Print sample records during processing (for debugging)
+  print_samples: true
+  
+  # Max records to print per batch
+  sample_count: 5

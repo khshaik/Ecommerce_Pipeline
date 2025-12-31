@@ -1,0 +1,127 @@
+services:
+  # ----------------------------
+  # Spark Cluster (Master/Workers)
+  # ----------------------------
+  spark-master:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ecomm-spark-custom
+    container_name: spark-master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+    volumes:
+       - ./apps:/opt/spark-apps
+       - ./data:/opt/spark-data
+    environment:
+      - SPARK_WORKLOAD=master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+
+  spark-worker-a:
+    image: ecomm-spark-custom
+    container_name: spark-worker-a
+    ports:
+      - "9091:8080"
+      - "7002:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+    volumes:
+       - ./apps:/opt/spark-apps
+       - ./data:/opt/spark-data
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+
+  spark-worker-b:
+    image: ecomm-spark-custom
+    container_name: spark-worker-b
+    ports:
+      - "9785:8080"
+      - "7001:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_WORKLOAD=worker
+    volumes:
+        - ./apps:/opt/spark-apps
+        - ./data:/opt/spark-data
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+
+  # ----------------------------
+  # Spark Runner (For submitting jobs)
+  # ----------------------------
+  spark-runner:
+    image: ecomm-spark-custom
+    container_name: spark-runner
+    depends_on:
+      - spark-master
+      - postgres
+      - kafka
+    volumes:
+      - .:/app
+      # Mount host output into container under /app so Spark writes into project root
+      # - ./2025em1100102/output/records:/app/2025em1100102/output/records
+      - ./datalake/food/2025em1100102/output/orders:/app/2025em1100102/output/records
+    working_dir: /app
+    # Keep container alive to run spark-submit commands manually
+    command: tail -f /dev/null
+
+  # ----------------------------
+  # PostgreSQL Database
+  # ----------------------------
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: student
+      POSTGRES_PASSWORD: student123
+      POSTGRES_DB: food_delivery_db
+    volumes:
+      # Persist data locally
+      - ./postgres_data:/var/lib/postgresql/data
+      # Initialize DB with your SQL script (put orders.sql in ./db folder)
+      - ./db:/docker-entrypoint-initdb.d
+
+  # ----------------------------
+  # Kafka & Zookeeper
+  # ----------------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2888
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2888:2888"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "29095:29095"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2888
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9095,PLAINTEXT_HOST://0.0.0.0:29095
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9095,PLAINTEXT_HOST://localhost:29095
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "2025em1100102_food_orders_raw:3:1"

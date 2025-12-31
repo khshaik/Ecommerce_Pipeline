@@ -1,0 +1,34 @@
+-- 1. Create the 2025em1100102_orders table
+-- Using '2025em1100102_orders' as the table name. 
+-- TODO: Rename table to <rollnumber>_orders. Check assignment later
+
+CREATE TABLE IF NOT EXISTS "2025em1100102_orders" (
+    order_id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(255) NOT NULL,
+    restaurant_name VARCHAR(255) NOT NULL,
+    item VARCHAR(255) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    order_status VARCHAR(50) CHECK (order_status IN ('PLACED', 'PREPARING', 'DELIVERED', 'CANCELLED')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Insert 10 initial sample records
+-- We use explicit timestamps to simulate a history of 2025em1100102_orders.
+
+INSERT INTO "2025em1100102_orders" (customer_name, restaurant_name, item, amount, order_status, created_at) VALUES
+('Alice Smith', 'Spice Garden', 'Butter Chicken', 350.00, 'DELIVERED', '2025-11-18 10:00:00'),
+('Bob Jones', 'Burger King', 'Whopper Meal', 250.50, 'DELIVERED', '2025-11-18 10:05:00'),
+('Charlie Brown', 'Pizza Hut', 'Margherita Pizza', 199.00, 'DELIVERED', '2025-11-18 10:15:00'),
+('David Wilson', 'Starbucks', 'Cappuccino', 220.00, 'DELIVERED', '2025-11-18 10:30:00'),
+('Eva Green', 'Subway', 'Veggie Delite', 180.00, 'PLACED', '2025-11-18 11:00:00'),
+('Frank White', 'Taco Bell', 'Crunchy Taco', 99.00, 'PREPARING', '2025-11-18 11:10:00'),
+('Grace Lee', 'Dominos', 'Pepperoni Pizza', 450.00, 'PLACED', '2025-11-18 11:20:00'),
+('Henry Ford', 'KFC', 'Zinger Burger', 175.00, 'CANCELLED', '2025-11-18 11:25:00'),
+('Ivy Chen', 'McDonalds', 'McAloo Tikki', 65.00, 'DELIVERED', '2025-11-18 11:45:00'),
+('Jack Black', 'Baskin Robbins', 'Chocolate Scoop', 120.00, 'PLACED', '2025-11-18 12:00:00');
+
+-- 3. Verify data records 
+SELECT * FROM "2025em1100102_orders";
+
+-- 4. Verify data records count
+SELECT COUNT(*) as total_records FROM "2025em1100102_orders";
