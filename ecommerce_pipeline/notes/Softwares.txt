@@ -1,0 +1,173 @@
+---
+
+# ✅ **2. Recommended Software Installation Steps (MacOS)**
+
+Here is a fully clean, reliable setup for Mac (Intel or M1/M2/M3).
+
+---
+
+# ⭐ **2.1 Install PostgreSQL**
+
+### **Install via Homebrew**
+
+1. brew update
+2. brew install postgresql
+3. brew install --cask pgadmin4 -- Install pgAdmin on macOS
+4. open /Applications/pgAdmin\ 4.app -- Start pgAdmin 
+    Launches as a web app: URL → http://127.0.0.1:5050
+    Login → pgAdmin email/password you create
+
+5. Connect to PostgreSQL
+Inside pgAdmin:
+  Right-click Servers → Register → Server
+  Host: localhost
+  Port: 5432
+  Username: 81194246/ postgres
+  Password: admin/ whatever you set
+
+  Right-click Server -> Create Schema -> Provide name
+  Right-click Schema -> Create Table -> Provide name
+
+6. brew services start postgresql
+  To start postgresql@14 now and restart at login:
+    brew services start postgresql@14
+
+  Or, if you don't want/need a background service you can just run:
+    /opt/homebrew/opt/postgresql@14/bin/postgres -D /opt/homebrew/var/postgresql@14
+
+7. Alternatively install TablePlus / DBeaver / Beekeeper Studio (Desktop Apps)
+  These are lightweight SQL GUIs.
+    Example (TablePlus): brew install --cask tableplus
+
+### **Create database**
+
+```
+psql postgres
+CREATE DATABASE food_delivery_db;
+\c food_delivery_db;
+```
+
+### **Create table**
+
+Use the script `db/orders.sql`.
+
+---
+
+# ⭐ **2.2 Install Kafka (Apache Kafka + Zookeeper)**
+
+### **Install Kafka**
+brew install kafka
+
+### **Install Zookeeper**
+brew install zookeeper
+
+### **Start Zookeeper**
+brew services start zookeeper
+
+### **Start Kafka Broker**
+brew services start kafka
+
+✅ Default Ports (Homebrew Kafka + Zookeeper)
+Service          | Default Port  | What it’s used for
+Zookeeper        |   2181      | Coordination service for Kafka
+Kafka Broker     |9092     | Kafka client connections (producers/consumers)
+Kafka Controller (KRaft mode only)  9093  Internal quorum control
+
+lsof -iTCP -sTCP:LISTEN | grep -E 'kafka|zookeeper'
+
+### **Create topic**
+kafka-topics --create \
+  --topic <rollnumber>_food_orders_raw \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 --replication-factor 1
+
+---
+
+# ⭐ **2.3 Install Apache Spark 3.5.x (w/ Kafka Support)**
+
+### **Install Spark**
+
+```
+brew install apache-spark
+```
+
+### **Add Kafka connector JARs**
+
+Required JAR:
+
+```
+org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+```
+
+Spark Submit already includes it via:
+
+```
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+```
+
+---
+
+# ⭐ **2.4 Create Virtual Environment**
+
+```
+python3 -m venv de_env
+source de_env/bin/activate
+pip install pyspark==3.5.1
+pip install psycopg2-binary
+pip install pyyaml
+```
+
+---
+
+# ⭐ **2.5 Setup Directory Structure (Required)**
+
+Based on assignment spec :
+
+```
+<rollnumber>/food_delivery_streaming/local/
+├── db/orders.sql
+├── producers/orders_cdc_producer.py
+├── consumers/orders_stream_consumer.py
+├── scripts/producer_spark_submit.sh
+├── scripts/consumer_spark_submit.sh
+├── configs/orders_stream.yml
+└── README.md
+```
+
+---
+
+# ⭐ **2.6 Sample YAML Config**
+
+(As required) 
+
+```
+postgres:
+  jdbc_url: "jdbc:postgresql://127.0.0.1:5432/food_delivery_db"
+  host: "127.0.0.1"
+  port: 5432
+  db: "food_delivery_db"
+  user: "student"
+  password: "student123"
+  table: "<rollnumber>_orders"
+
+kafka:
+  brokers: "localhost:9092"
+  topic: "<rollnumber>_food_orders_raw"
+
+datalake:
+  path: "/datalake/food/<rollnumber>/output/orders"
+  format: "parquet"
+
+streaming:
+  checkpoint_location: "/datalake/food/<rollnumber>/checkpoints/orders"
+  last_processed_timestamp_location: "/datalake/food/<rollnumber>/lastprocess/orders"
+  batch_interval: 5
+```
+
+---
+
+# ✅ **3. Full End-to-End Local Development Workflow on Mac**
+
+This section explains everything step-by-step, exactly how a real data engineer would develop, run, and validate the pipeline.
+
+---

@@ -1,0 +1,210 @@
+Overview
+
+Goal: Build an end-to-end pipeline: Postgres → (CDC Spark producer) → Kafka → (Spark Structured Streaming consumer) → partitioned Parquet data lake.
+Config-driven: All runtime values live in configs/orders_stream.yml.
+Core CDC: Use created_at > last_processed_timestamp persisted in a local file.
+Prerequisites
+
+Tools: spark-submit (Spark 3.5.1), Python 3.10+, psql or Docker Compose for Postgres, Kafka/Zookeeper (brew or Docker), kafka-topics CLI.
+Workspace files: db/orders.sql (exists), scripts/ with small helpers.
+Paths in workspace: Use configs/, producers/, consumers/, datalake/ (local or S3 path), and checkpoints/.
+Step-by-step Implementation Path (incremental)
+
+Environment & quick checks
+
+Verify Docker Compose: docker compose up --build (you already have run previously).
+Check Spark: run spark-submit --version.
+Check Python: create venv and install minimal packages as needed (see Step 7).
+Step 1 — Deploy / seed Postgres
+
+Action: Run the SQL file to create the orders table and insert base rows.
+Commands (if using local psql):
+psql -h localhost -p 5432 -U postgres -f db/orders.sql
+If using Docker Postgres: use docker exec -it <pg_container> psql -U postgres -f /path/in/container/orders.sql.
+Verify: psql -h ... -c "SELECT count(*) FROM <rollnumber>_orders;"
+Step 2 — Start Kafka & create topic
+
+If using brew-managed Kafka/Zookeeper (macOS):
+brew services start zookeeper
+brew services start kafka
+Or via Docker Compose: ensure docker-compose.yml contains Kafka/Zookeeper services and run docker compose up -d kafka zookeeper.
+Create topic:
+kafka-topics --create --topic <rollnumber>_food_orders_raw --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+Verify:
+kafka-topics --list --bootstrap-server localhost:9092
+kafka-topics --describe --topic <rollnumber>_food_orders_raw --bootstrap-server localhost:9092
+Step 3 — Create configs/orders_stream.yml
+
+Purpose: Centralize all variables. Create configs/orders_stream.yml at project root.
+Sample content:
+Note: Replace <rollnumber> everywhere with your roll number string.
+Step 4 — Implement the Spark CDC Producer (producers/orders_cdc_producer.py)
+
+Behavior & approach (incremental):
+Read YAML config.
+Loop every poll_interval_sec:
+Read last_processed_timestamp from state/last_processed_timestamp.txt (if missing, use epoch or min timestamp).
+Query Postgres for rows with created_at > last_processed_timestamp ordered by created_at ascending (limit optional).
+Convert DataFrame rows to JSON string column named value.
+Write to Kafka using DataFrame .selectExpr("to_json(struct(*)) as value") then .write.format("kafka").option("kafka.bootstrap.servers", ...).option("topic", ...).save().
+After successful publish, update last_processed_timestamp to max(created_at) of the batch atomically (write to file).
+Exit conditions: run continuously until killed.
+Important Spark details:
+Use SparkSession with necessary Kafka & JDBC connectors via --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1.
+Use spark.read.format("jdbc").option("dbtable", "(SELECT ...) as t") or .option("query", "...").
+When writing to Kafka, create value as string (cast to binary is handled by connector).
+Sketch of key steps in the script (not full code):
+Read config + init SparkSession.
+While True:
+last_ts = read file or default
+df = spark.read.format("jdbc").option("query", f"SELECT * FROM {table} WHERE created_at > '{last_ts}' ORDER BY created_at ASC").load()
+if df.count() > 0: df_json = df.selectExpr("to_json(struct(*)) AS value"); df_json.write.format("kafka").option(...).save()
+write new last_ts to file
+sleep(poll_interval_sec)
+Run command:
+Step 5 — Implement Spark Consumer (consumers/orders_stream_consumer.py)
+
+Requirements:
+Read Kafka JSON events, parse according to schema (explicit).
+Clean:
+Drop rows with null order_id.
+Filter amount >= 0 (or >0 per assignment).
+Add date column: to_date(col("created_at")) or date_format.
+Write to Parquet partitioned by date with checkpointing enabled.
+Key Spark Structured Streaming details:
+spark.readStream.format("kafka").option("subscribe", topic).option("kafka.bootstrap.servers", ...).load()
+df = raw.selectExpr("CAST(value AS STRING) as json")
+df2 = df.select(from_json(col("json"), schema).alias("d")).select("d.*")
+df_clean = df2.filter(col("order_id").isNotNull()).filter(col("amount") >= 0)
+df_out = df_clean.withColumn("date", date_format(col("created_at"), "yyyy-MM-dd"))
+df_out.writeStream.format("parquet").option("path", output_path).option("checkpointLocation", checkpoint_dir).partitionBy("date").start()
+Run command:
+Notes: Keep checkpoint directory persistent; use a stable path.
+Step 6 — Virtualenv & Python dependencies
+
+Create venv:
+requirements.txt suggestion:
+Note: Spark provides most DB/Kafka connectors via --packages; Python run-time only needs YAML and DB client if you use non-Spark DB calls.
+Step 7 — End-to-end testing (Round 1 & Round 2)
+
+Round 1:
+Insert 5 new rows into Postgres:
+Start consumer (if not already).
+Start producer (if not already).
+Observe producer logs: should show N rows read and published.
+Observe consumer logs: should show micro-batches processed.
+Verify Parquet files:
+ls -R datalake/food/<rollnumber>/output/orders/date=*
+Use Spark to read and show results:
+Or use a small PySpark script:
+Round 2:
+Insert 5 more rows (timestamps later than previous).
+Expect new partitions or new files in same partition date.
+Verify counts increased by 5 and no duplicates.
+Checklist to validate:
+No duplicate order_id across output (run a distinct count check).
+Checkpoint directory updated (contains offset files).
+state/last_processed_timestamp.txt advanced monotonically.
+Step 8 — Add helper scripts & README
+
+Add scripts/insert_test_orders.sql or small Python script to insert test rows with current timestamps to speed testing.
+Update README.md with exact commands and explanation of config fields and verification steps.
+Optional — Dockerizing Kafka & Spark for reproducibility
+
+Provide a small docker-compose-kafka.yml to run Zookeeper and Kafka if brew is unavailable.
+Optionally provide local Spark Docker or run Spark locally.
+Code templates / snippets
+
+configs/orders_stream.yml: (already shown above)
+Producer key ideas:
+Use spark.read.format("jdbc") with .option("query", "SELECT ... WHERE created_at > '...').
+Create JSON: from pyspark.sql.functions import to_json, struct; df_json = df.select(to_json(struct([df[x] for x in df.columns])).alias("value")).
+Send to Kafka: df_json.write.format("kafka").option("kafka.bootstrap.servers", ...) .option("topic", ...) .save().
+Update state/last_processed_timestamp.txt from the max created_at of df.
+Consumer key ideas:
+Schema definition using StructType.
+spark.readStream.format("kafka")...
+select(from_json(col("value").cast("string"), schema).alias("data")).select("data.*")
+Filters and withColumn("date", date_format(col("created_at"), "yyyy-MM-dd"))
+writeStream.format("parquet").option("path", output_path).option("checkpointLocation", checkpoint_dir).partitionBy("date").start().awaitTermination()
+Verification commands
+
+List parquet files:
+ls -la datalake/food/<rollnumber>/output/orders/date=*/
+Count rows:
+spark-submit --master local[*] -c "from pyspark.sql import SparkSession; s=SparkSession.builder.getOrCreate(); print(s.read.parquet('datalake/food/<rollnumber>/output/orders').count())"
+Check duplicates:
+spark-submit --master local[*] -c "s=SparkSession.builder.getOrCreate(); df=s.read.parquet('datalake/...'); print(df.count(), df.select('order_id').distinct().count())"
+Pitfalls & tips
+
+Atomic update of last_processed_timestamp: After confirming messages were written to Kafka, update the file. If you update before write finishes, you risk data loss.
+Idempotency: Consumer relies on checkpointing. Keep checkpoint location stable across restarts.
+Timestamps timezone: Ensure created_at comparisons are made in consistent timezone (store UTC).
+Schema evolution: Use explicit schema in consumer to avoid schema drift.
+Testing small batches: During development, use poll_interval_sec as 2–5 seconds and small batch_limit to avoid huge data pulls.
+Next steps (I can do now)
+
+Option A (recommended): I can create the configs/orders_stream.yml and skeleton producer and consumer scripts in producers/ and consumers/, with runnable code and small README. (This will include code for reading/writing, and a simple test helper). Want me to implement these files now?
+Option B: If you prefer to implement manually, I can instead produce full, ready-to-copy code blocks for both scripts and a checklist of exact commands to run.
+Tell me which option you prefer. If you want me to implement files now, I will:
+
+Create configs/orders_stream.yml (filled with placeholders),
+Add producers/orders_cdc_producer.py skeleton with working logic,
+Add consumers/orders_stream_consumer.py fully working streaming code,
+Add small scripts/insert_test_orders.py to insert test rows,
+And update the TODO list marking tasks completed as I finish them. - Round 2:
+Insert 5 more rows (timestamps later than previous).
+Expect new partitions or new files in same partition date.
+Verify counts increased by 5 and no duplicates.
+Checklist to validate:
+No duplicate order_id across output (run a distinct count check).
+Checkpoint directory updated (contains offset files).
+state/last_processed_timestamp.txt advanced monotonically.
+Step 8 — Add helper scripts & README
+
+Add scripts/insert_test_orders.sql or small Python script to insert test rows with current timestamps to speed testing.
+Update README.md with exact commands and explanation of config fields and verification steps.
+Optional — Dockerizing Kafka & Spark for reproducibility
+
+Provide a small docker-compose-kafka.yml to run Zookeeper and Kafka if brew is unavailable.
+Optionally provide local Spark Docker or run Spark locally.
+Code templates / snippets
+
+configs/orders_stream.yml: (already shown above)
+Producer key ideas:
+Use spark.read.format("jdbc") with .option("query", "SELECT ... WHERE created_at > '...').
+Create JSON: from pyspark.sql.functions import to_json, struct; df_json = df.select(to_json(struct([df[x] for x in df.columns])).alias("value")).
+Send to Kafka: df_json.write.format("kafka").option("kafka.bootstrap.servers", ...) .option("topic", ...) .save().
+Update state/last_processed_timestamp.txt from the max created_at of df.
+Consumer key ideas:
+Schema definition using StructType.
+spark.readStream.format("kafka")...
+select(from_json(col("value").cast("string"), schema).alias("data")).select("data.*")
+Filters and withColumn("date", date_format(col("created_at"), "yyyy-MM-dd"))
+writeStream.format("parquet").option("path", output_path).option("checkpointLocation", checkpoint_dir).partitionBy("date").start().awaitTermination()
+Verification commands
+
+List parquet files:
+ls -la datalake/food/<rollnumber>/output/orders/date=*/
+Count rows:
+spark-submit --master local[*] -c "from pyspark.sql import SparkSession; s=SparkSession.builder.getOrCreate(); print(s.read.parquet('datalake/food/<rollnumber>/output/orders').count())"
+Check duplicates:
+spark-submit --master local[*] -c "s=SparkSession.builder.getOrCreate(); df=s.read.parquet('datalake/...'); print(df.count(), df.select('order_id').distinct().count())"
+Pitfalls & tips
+
+Atomic update of last_processed_timestamp: After confirming messages were written to Kafka, update the file. If you update before write finishes, you risk data loss.
+Idempotency: Consumer relies on checkpointing. Keep checkpoint location stable across restarts.
+Timestamps timezone: Ensure created_at comparisons are made in consistent timezone (store UTC).
+Schema evolution: Use explicit schema in consumer to avoid schema drift.
+Testing small batches: During development, use poll_interval_sec as 2–5 seconds and small batch_limit to avoid huge data pulls.
+Next steps (I can do now)
+
+Option A (recommended): I can create the configs/orders_stream.yml and skeleton producer and consumer scripts in producers/ and consumers/, with runnable code and small README. (This will include code for reading/writing, and a simple test helper). Want me to implement these files now?
+Option B: If you prefer to implement manually, I can instead produce full, ready-to-copy code blocks for both scripts and a checklist of exact commands to run.
+Tell me which option you prefer. If you want me to implement files now, I will:
+
+Create configs/orders_stream.yml (filled with placeholders),
+Add producers/orders_cdc_producer.py skeleton with working logic,
+Add consumers/orders_stream_consumer.py fully working streaming code,
+Add small scripts/insert_test_orders.py to insert test rows,
+And update the TODO list marking tasks completed as I finish them.
