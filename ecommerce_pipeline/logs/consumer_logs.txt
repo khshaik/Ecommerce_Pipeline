@@ -1,0 +1,466 @@
+
+org.apache.spark.api.java.JavaSparkContext.<init>(JavaSparkContext.scala:58)
+java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Unknown Source)
+java.base/java.lang.reflect.Constructor.newInstance(Unknown Source)
+py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:247)
+py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+py4j.Gateway.invoke(Gateway.java:238)
+py4j.commands.ConstructorCommand.invokeConstructor(ConstructorCommand.java:80)
+py4j.commands.ConstructorCommand.execute(ConstructorCommand.java:69)
+py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+java.base/java.lang.Thread.run(Unknown Source)
+         
+        at org.apache.spark.SparkContext.assertNotStopped(SparkContext.scala:120)
+        at org.apache.spark.SparkContext.cancelJobGroup(SparkContext.scala:2442)
+        at org.apache.spark.sql.execution.streaming.MicroBatchExecution.stop(MicroBatchExecution.scala:210)
+        at org.apache.spark.sql.execution.streaming.StreamingQueryWrapper.stop(StreamingQueryWrapper.scala:61)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+        at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+        at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+        at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+        at py4j.Gateway.invoke(Gateway.java:282)
+        at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+        at py4j.commands.CallCommand.execute(CallCommand.java:79)
+        at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+        at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+        at java.base/java.lang.Thread.run(Unknown Source)
+
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % clear
+81194246@INHQN473V4C2 DSP_GA2_2025em1100102_201207 % docker exec -it spark-runner /opt/spark/bin/spark-submit \
+  --packages "org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,org.postgresql:postgresql:42.7.1" \
+  --master "local[*]" \
+  --driver-memory 2g \
+  --executor-memory 2g \
+  consumers/orders_stream_consumer.py \
+  --config configs/orders_stream.yml
+:: loading settings :: url = jar:file:/opt/spark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+Ivy Default Cache set to: /root/.ivy2/cache
+The jars for the packages stored in: /root/.ivy2/jars
+org.apache.spark#spark-sql-kafka-0-10_2.12 added as a dependency
+org.postgresql#postgresql added as a dependency
+:: resolving dependencies :: org.apache.spark#spark-submit-parent-5adc32ca-3c0a-4343-95ab-293d3d6ff91e;1.0
+        confs: [default]
+        found org.apache.spark#spark-sql-kafka-0-10_2.12;3.4.0 in central
+        found org.apache.spark#spark-token-provider-kafka-0-10_2.12;3.4.0 in central
+        found org.apache.kafka#kafka-clients;3.3.2 in central
+        found org.lz4#lz4-java;1.8.0 in central
+        found org.xerial.snappy#snappy-java;1.1.9.1 in central
+        found org.slf4j#slf4j-api;2.0.6 in central
+        found org.apache.hadoop#hadoop-client-runtime;3.3.4 in central
+        found org.apache.hadoop#hadoop-client-api;3.3.4 in central
+        found commons-logging#commons-logging;1.1.3 in central
+        found com.google.code.findbugs#jsr305;3.0.0 in central
+        found org.apache.commons#commons-pool2;2.11.1 in central
+        found org.postgresql#postgresql;42.7.1 in central
+        found org.checkerframework#checker-qual;3.41.0 in central
+:: resolution report :: resolve 224ms :: artifacts dl 9ms
+        :: modules in use:
+        com.google.code.findbugs#jsr305;3.0.0 from central in [default]
+        commons-logging#commons-logging;1.1.3 from central in [default]
+        org.apache.commons#commons-pool2;2.11.1 from central in [default]
+        org.apache.hadoop#hadoop-client-api;3.3.4 from central in [default]
+        org.apache.hadoop#hadoop-client-runtime;3.3.4 from central in [default]
+        org.apache.kafka#kafka-clients;3.3.2 from central in [default]
+        org.apache.spark#spark-sql-kafka-0-10_2.12;3.4.0 from central in [default]
+        org.apache.spark#spark-token-provider-kafka-0-10_2.12;3.4.0 from central in [default]
+        org.checkerframework#checker-qual;3.41.0 from central in [default]
+        org.lz4#lz4-java;1.8.0 from central in [default]
+        org.postgresql#postgresql;42.7.1 from central in [default]
+        org.slf4j#slf4j-api;2.0.6 from central in [default]
+        org.xerial.snappy#snappy-java;1.1.9.1 from central in [default]
+        ---------------------------------------------------------------------
+        |                  |            modules            ||   artifacts   |
+        |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+        ---------------------------------------------------------------------
+        |      default     |   13  |   0   |   0   |   0   ||   13  |   0   |
+        ---------------------------------------------------------------------
+:: retrieving :: org.apache.spark#spark-submit-parent-5adc32ca-3c0a-4343-95ab-293d3d6ff91e
+        confs: [default]
+        0 artifacts copied, 13 already retrieved (0kB/5ms)
+25/12/07 07:33:35 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+================================================================================
+FOOD DELIVERY - REAL-TIME STREAMING CONSUMER
+================================================================================
+[CONSUMER] Loading configuration from: configs/orders_stream.yml
+[CONSUMER] Configuration loaded successfully
+[CONSUMER] Initializing Spark Session...
+25/12/07 07:33:36 INFO SparkContext: Running Spark version 3.4.0
+25/12/07 07:33:36 INFO ResourceUtils: ==============================================================
+25/12/07 07:33:36 INFO ResourceUtils: No custom resources configured for spark.driver.
+25/12/07 07:33:36 INFO ResourceUtils: ==============================================================
+25/12/07 07:33:36 INFO SparkContext: Submitted application: FoodOrdersStreamConsumer
+25/12/07 07:33:36 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 2048, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+25/12/07 07:33:36 INFO ResourceProfile: Limiting resource is cpu
+25/12/07 07:33:36 INFO ResourceProfileManager: Added ResourceProfile id: 0
+25/12/07 07:33:36 INFO SecurityManager: Changing view acls to: root
+25/12/07 07:33:36 INFO SecurityManager: Changing modify acls to: root
+25/12/07 07:33:36 INFO SecurityManager: Changing view acls groups to: 
+25/12/07 07:33:36 INFO SecurityManager: Changing modify acls groups to: 
+25/12/07 07:33:36 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: root; groups with view permissions: EMPTY; users with modify permissions: root; groups with modify permissions: EMPTY
+25/12/07 07:33:36 INFO Utils: Successfully started service 'sparkDriver' on port 46607.
+25/12/07 07:33:36 INFO SparkEnv: Registering MapOutputTracker
+25/12/07 07:33:36 INFO SparkEnv: Registering BlockManagerMaster
+25/12/07 07:33:36 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+25/12/07 07:33:36 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+25/12/07 07:33:36 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+25/12/07 07:33:36 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-c674b61f-7de7-42f5-8700-d2811aca8be2
+25/12/07 07:33:36 INFO MemoryStore: MemoryStore started with capacity 1048.8 MiB
+25/12/07 07:33:36 INFO SparkEnv: Registering OutputCommitCoordinator
+25/12/07 07:33:36 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+25/12/07 07:33:36 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+25/12/07 07:33:36 INFO Utils: Successfully started service 'SparkUI' on port 4041.
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar at spark://1b6bccd8128a:46607/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.postgresql_postgresql-42.7.1.jar at spark://1b6bccd8128a:46607/jars/org.postgresql_postgresql-42.7.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar at spark://1b6bccd8128a:46607/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.apache.kafka_kafka-clients-3.3.2.jar at spark://1b6bccd8128a:46607/jars/org.apache.kafka_kafka-clients-3.3.2.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar at spark://1b6bccd8128a:46607/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar at spark://1b6bccd8128a:46607/jars/org.apache.commons_commons-pool2-2.11.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar at spark://1b6bccd8128a:46607/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar at spark://1b6bccd8128a:46607/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar at spark://1b6bccd8128a:46607/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.slf4j_slf4j-api-2.0.6.jar at spark://1b6bccd8128a:46607/jars/org.slf4j_slf4j-api-2.0.6.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar at spark://1b6bccd8128a:46607/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar at spark://1b6bccd8128a:46607/jars/commons-logging_commons-logging-1.1.3.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added JAR file:///root/.ivy2/jars/org.checkerframework_checker-qual-3.41.0.jar at spark://1b6bccd8128a:46607/jars/org.checkerframework_checker-qual-3.41.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar at file:///root/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.postgresql_postgresql-42.7.1.jar at file:///root/.ivy2/jars/org.postgresql_postgresql-42.7.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.postgresql_postgresql-42.7.1.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.postgresql_postgresql-42.7.1.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar at file:///root/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.apache.kafka_kafka-clients-3.3.2.jar at file:///root/.ivy2/jars/org.apache.kafka_kafka-clients-3.3.2.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.apache.kafka_kafka-clients-3.3.2.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.kafka_kafka-clients-3.3.2.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar at file:///root/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/com.google.code.findbugs_jsr305-3.0.0.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar at file:///root/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.commons_commons-pool2-2.11.1.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar at file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar at file:///root/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.lz4_lz4-java-1.8.0.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar at file:///root/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.xerial.snappy_snappy-java-1.1.9.1.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.slf4j_slf4j-api-2.0.6.jar at file:///root/.ivy2/jars/org.slf4j_slf4j-api-2.0.6.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.slf4j_slf4j-api-2.0.6.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.slf4j_slf4j-api-2.0.6.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar at file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-api-3.3.4.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar at file:///root/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/commons-logging_commons-logging-1.1.3.jar
+25/12/07 07:33:36 INFO SparkContext: Added file file:///root/.ivy2/jars/org.checkerframework_checker-qual-3.41.0.jar at file:///root/.ivy2/jars/org.checkerframework_checker-qual-3.41.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Copying /root/.ivy2/jars/org.checkerframework_checker-qual-3.41.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.checkerframework_checker-qual-3.41.0.jar
+25/12/07 07:33:36 INFO Executor: Starting executor ID driver on host 1b6bccd8128a
+25/12/07 07:33:36 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.postgresql_postgresql-42.7.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.postgresql_postgresql-42.7.1.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.postgresql_postgresql-42.7.1.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/commons-logging_commons-logging-1.1.3.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/commons-logging_commons-logging-1.1.3.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.apache.commons_commons-pool2-2.11.1.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.commons_commons-pool2-2.11.1.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.apache.kafka_kafka-clients-3.3.2.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.apache.kafka_kafka-clients-3.3.2.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.kafka_kafka-clients-3.3.2.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.checkerframework_checker-qual-3.41.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.checkerframework_checker-qual-3.41.0.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.checkerframework_checker-qual-3.41.0.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-api-3.3.4.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.slf4j_slf4j-api-2.0.6.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.slf4j_slf4j-api-2.0.6.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.slf4j_slf4j-api-2.0.6.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.lz4_lz4-java-1.8.0.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.lz4_lz4-java-1.8.0.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/com.google.code.findbugs_jsr305-3.0.0.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/com.google.code.findbugs_jsr305-3.0.0.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar
+25/12/07 07:33:36 INFO Executor: Fetching file:///root/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: /root/.ivy2/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.xerial.snappy_snappy-java-1.1.9.1.jar
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO TransportClientFactory: Successfully created connection to 1b6bccd8128a/172.18.0.8:46607 after 10 ms (0 ms spent in bootstraps)
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.apache.hadoop_hadoop-client-api-3.3.4.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp4365250225660279104.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp4365250225660279104.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-api-3.3.4.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-api-3.3.4.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.postgresql_postgresql-42.7.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.postgresql_postgresql-42.7.1.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp8839856520344754320.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp8839856520344754320.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.postgresql_postgresql-42.7.1.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.postgresql_postgresql-42.7.1.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp10129032409594460482.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp10129032409594460482.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-token-provider-kafka-0-10_2.12-3.4.0.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/com.google.code.findbugs_jsr305-3.0.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/com.google.code.findbugs_jsr305-3.0.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp5924103556361264614.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp5924103556361264614.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/com.google.code.findbugs_jsr305-3.0.0.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/com.google.code.findbugs_jsr305-3.0.0.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.lz4_lz4-java-1.8.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.lz4_lz4-java-1.8.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp7462324278592251499.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp7462324278592251499.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.lz4_lz4-java-1.8.0.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.lz4_lz4-java-1.8.0.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.xerial.snappy_snappy-java-1.1.9.1.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp4321890611502793371.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp4321890611502793371.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.xerial.snappy_snappy-java-1.1.9.1.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.xerial.snappy_snappy-java-1.1.9.1.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp8576226846218518693.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp8576226846218518693.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.spark_spark-sql-kafka-0-10_2.12-3.4.0.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/commons-logging_commons-logging-1.1.3.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/commons-logging_commons-logging-1.1.3.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp12423258084418316917.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp12423258084418316917.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/commons-logging_commons-logging-1.1.3.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/commons-logging_commons-logging-1.1.3.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.apache.kafka_kafka-clients-3.3.2.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.apache.kafka_kafka-clients-3.3.2.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp15246282004544190245.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp15246282004544190245.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.kafka_kafka-clients-3.3.2.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.kafka_kafka-clients-3.3.2.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp17922777141455273451.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp17922777141455273451.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.hadoop_hadoop-client-runtime-3.3.4.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.slf4j_slf4j-api-2.0.6.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.slf4j_slf4j-api-2.0.6.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp6979302576734046862.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp6979302576734046862.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.slf4j_slf4j-api-2.0.6.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.slf4j_slf4j-api-2.0.6.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.checkerframework_checker-qual-3.41.0.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.checkerframework_checker-qual-3.41.0.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp8763277274601429382.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp8763277274601429382.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.checkerframework_checker-qual-3.41.0.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.checkerframework_checker-qual-3.41.0.jar to class loader
+25/12/07 07:33:36 INFO Executor: Fetching spark://1b6bccd8128a:46607/jars/org.apache.commons_commons-pool2-2.11.1.jar with timestamp 1765092816142
+25/12/07 07:33:36 INFO Utils: Fetching spark://1b6bccd8128a:46607/jars/org.apache.commons_commons-pool2-2.11.1.jar to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp13466786635251673651.tmp
+25/12/07 07:33:36 INFO Utils: /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/fetchFileTemp13466786635251673651.tmp has been previously copied to /tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.commons_commons-pool2-2.11.1.jar
+25/12/07 07:33:36 INFO Executor: Adding file:/tmp/spark-b270499f-46ed-437b-977e-2c1e368e6586/userFiles-5cca9d41-380c-44f1-8b04-3519d1623f8d/org.apache.commons_commons-pool2-2.11.1.jar to class loader
+25/12/07 07:33:36 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 41931.
+25/12/07 07:33:36 INFO NettyBlockTransferService: Server created on 1b6bccd8128a:41931
+25/12/07 07:33:36 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+25/12/07 07:33:36 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 1b6bccd8128a, 41931, None)
+25/12/07 07:33:36 INFO BlockManagerMasterEndpoint: Registering block manager 1b6bccd8128a:41931 with 1048.8 MiB RAM, BlockManagerId(driver, 1b6bccd8128a, 41931, None)
+25/12/07 07:33:36 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 1b6bccd8128a, 41931, None)
+25/12/07 07:33:36 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 1b6bccd8128a, 41931, None)
+[CONSUMER] Spark Session initialized
+[CONSUMER] ========================================
+[CONSUMER] STARTING SPARK STRUCTURED STREAMING
+[CONSUMER] ========================================
+
+[CONSUMER] STEP 1: Reading from Kafka topic...
+[CONSUMER] Kafka consumer configuration:
+  kafka.bootstrap.servers: kafka:9095
+  subscribe: 2025em1100102_food_orders_raw
+  startingOffsets: earliest
+  kafka.group.id: food_orders_consumer_group
+  maxOffsetsPerTrigger: 1000
+  failOnDataLoss: false
+25/12/07 07:33:37 WARN KafkaSourceProvider: Kafka option 'kafka.group.id' has been set on this query, it is
+ not recommended to set this option. This option is unsafe to use since multiple concurrent
+ queries or sources using the same group id will interfere with each other as they are part
+ of the same consumer group. Restarted queries may also suffer interference from the
+ previous run having the same group id. The user should have only one query per group id,
+ and/or set the option 'kafka.session.timeout.ms' to be very small so that the Kafka
+ consumers from the previous query are marked dead by the Kafka group coordinator before the
+ restarted query starts running.
+    
+25/12/07 07:33:37 WARN ResolveWriteToStream: Temporary checkpoint location created which is deleted normally when the query didn't fail: /tmp/temporary-caaaa855-3ed1-4b75-ab76-779b1961d776. If it's required to delete it under any circumstances, please set spark.sql.streaming.forceDeleteTempCheckpointLocation to true. Important to know deleting temp checkpoint folder is best effort.
+25/12/07 07:33:37 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+[CONSUMER] Kafka stream initialized
+[CONSUMER] STEP 2: Parsing JSON messages...
+[CONSUMER] Schema defined
+25/12/07 07:33:37 WARN KafkaSourceProvider: Kafka option 'kafka.group.id' has been set on this query, it is
+ not recommended to set this option. This option is unsafe to use since multiple concurrent
+ queries or sources using the same group id will interfere with each other as they are part
+ of the same consumer group. Restarted queries may also suffer interference from the
+ previous run having the same group id. The user should have only one query per group id,
+ and/or set the option 'kafka.session.timeout.ms' to be very small so that the Kafka
+ consumers from the previous query are marked dead by the Kafka group coordinator before the
+ restarted query starts running.
+    
+[CONSUMER] JSON parsed successfully
+[CONSUMER] STEP 3: Applying data validation...
+[CONSUMER] Applying data validation rules (tagging rows)...
+[CONSUMER] RULE 1: order_id must be non-null
+[CONSUMER] RULE 2: amount must be non-negative and non-zero i.e. >0
+[CONSUMER] RULE 3: customer_name must be not null/empty
+[CONSUMER] RULE 4: restaurant_name must be not null/empty
+[CONSUMER] RULE 5: item must be not null/empty
+[CONSUMER] RULE 6: order_status must be not null/empty
+[CONSUMER] RULE 7: amount must be not null
+[CONSUMER] Data validation tagging applied
+[CONSUMER] FAILED validation records...
+25/12/07 07:33:38 WARN ResolveWriteToStream: Temporary checkpoint location created which is deleted normally when the query didn't fail: /tmp/temporary-ec2e3731-2ee9-4cc1-b408-21e9ee8d2ab1. If it's required to delete it under any circumstances, please set spark.sql.streaming.forceDeleteTempCheckpointLocation to true. Important to know deleting temp checkpoint folder is best effort.
+25/12/07 07:33:38 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+[CONSUMER] SUCCESS validation records...
+[CONSUMER] STEP 4: Adding date partition...
+25/12/07 07:33:38 WARN KafkaSourceProvider: Kafka option 'kafka.group.id' has been set on this query, it is
+ not recommended to set this option. This option is unsafe to use since multiple concurrent
+ queries or sources using the same group id will interfere with each other as they are part
+ of the same consumer group. Restarted queries may also suffer interference from the
+ previous run having the same group id. The user should have only one query per group id,
+ and/or set the option 'kafka.session.timeout.ms' to be very small so that the Kafka
+ consumers from the previous query are marked dead by the Kafka group coordinator before the
+ restarted query starts running.
+    
+[CONSUMER] Adding date partition column...
+[CONSUMER] Date partition column added
+25/12/07 07:33:38 WARN ResolveWriteToStream: Temporary checkpoint location created which is deleted normally when the query didn't fail: /tmp/temporary-080ef633-dd8b-43fc-885a-0f65512f06e3. If it's required to delete it under any circumstances, please set spark.sql.streaming.forceDeleteTempCheckpointLocation to true. Important to know deleting temp checkpoint folder is best effort.
+25/12/07 07:33:38 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+25/12/07 07:33:38 WARN KafkaSourceProvider: Kafka option 'kafka.group.id' has been set on this query, it is
+ not recommended to set this option. This option is unsafe to use since multiple concurrent
+ queries or sources using the same group id will interfere with each other as they are part
+ of the same consumer group. Restarted queries may also suffer interference from the
+ previous run having the same group id. The user should have only one query per group id,
+ and/or set the option 'kafka.session.timeout.ms' to be very small so that the Kafka
+ consumers from the previous query are marked dead by the Kafka group coordinator before the
+ restarted query starts running.
+    
+[CONSUMER] STEP 5: Writing to Parquet...
+[CONSUMER] Setting up streaming writer...
+  Raw configured output path: /app/datalake/food/2025em1100102/output/orders
+  Resolved output path: /app/datalake/food/2025em1100102/output/orders
+  Checkpoint dir: /app/datalake/food/2025em1100102/checkpoints/orders
+  Partition by: date
+  Trigger interval: 5000 milliseconds
+[CONSUMER] STEP 6: Starting streaming query...
+25/12/07 07:33:38 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, group.id, auto.offset.reset]' were supplied but are not used yet.
+25/12/07 07:33:38 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, group.id, auto.offset.reset]' were supplied but are not used yet.
+25/12/07 07:33:38 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, group.id, auto.offset.reset]' were supplied but are not used yet.
+25/12/07 07:33:38 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+[CONSUMER] ========================================
+[CONSUMER] STREAMING QUERY STARTED
+25/12/07 07:33:38 WARN KafkaSourceProvider: Kafka option 'kafka.group.id' has been set on this query, it is
+ not recommended to set this option. This option is unsafe to use since multiple concurrent
+ queries or sources using the same group id will interfere with each other as they are part
+ of the same consumer group. Restarted queries may also suffer interference from the
+ previous run having the same group id. The user should have only one query per group id,
+ and/or set the option 'kafka.session.timeout.ms' to be very small so that the Kafka
+ consumers from the previous query are marked dead by the Kafka group coordinator before the
+ restarted query starts running.
+    
+[CONSUMER] Query ID: 004881a0-21ce-4dbb-97d2-b2aa1322e2e1
+[CONSUMER] Query Name: None
+[CONSUMER] ========================================
+[CONSUMER] Running indefinitely (Ctrl+C to stop)...
+25/12/07 07:33:38 WARN AdminClientConfig: These configurations '[key.deserializer, value.deserializer, enable.auto.commit, max.poll.records, group.id, auto.offset.reset]' were supplied but are not used yet.
+-------------------------------------------
+Batch: 0
+-------------------------------------------
+Batch: 0
+-------------------------------------------
+-------------------------------------------
+-------------------------------------------
+Batch: 0
+-------------------------------------------
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+|order_id|customer_name|restaurant_name|item|amount|order_status|created_at|validation_status|
++--------+-------------+---------------+----+------+------------+----------+-----------------+
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|value                                                                                                                                                                                           |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|{"order_id":374,"customer_name":"Test Customer 1","restaurant_name":"Test Restaurant 1","item":"Test Item 1","amount":456.61,"order_status":"PLACED","created_at":"2025-12-07T07:31:47.448Z"}   |
+|{"order_id":375,"customer_name":"Test Customer 2","restaurant_name":"Test Restaurant 2","item":"Test Item 2","amount":492.47,"order_status":"DELIVERED","created_at":"2025-12-07T07:31:47.448Z"}|
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|order_id|customer_name  |restaurant_name  |item       |amount|order_status|created_at             |validation_status|date      |
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|374     |Test Customer 1|Test Restaurant 1|Test Item 1|456.61|PLACED      |2025-12-07 07:31:47.448|SUCCESS          |2025-12-07|
+|375     |Test Customer 2|Test Restaurant 2|Test Item 2|492.47|DELIVERED   |2025-12-07 07:31:47.448|SUCCESS          |2025-12-07|
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+
+-------------------------------------------
+Batch: 1
+-------------------------------------------
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|value                                                                                                                                                                                           |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|{"order_id":376,"customer_name":"Test Customer 1","restaurant_name":"Test Restaurant 1","item":"Test Item 1","amount":122.19,"order_status":"CANCELLED","created_at":"2025-12-07T07:37:13.141Z"}|
+|{"order_id":377,"customer_name":"Test Customer 2","restaurant_name":"Test Restaurant 2","item":"Test Item 2","amount":494.76,"order_status":"PLACED","created_at":"2025-12-07T07:37:13.141Z"}   |
+|{"order_id":378,"customer_name":"Test Customer 3","restaurant_name":"Test Restaurant 3","item":"Test Item 3","amount":72.82,"order_status":"CANCELLED","created_at":"2025-12-07T07:37:13.141Z"} |
+|{"order_id":379,"customer_name":"Test Customer 4","restaurant_name":"Test Restaurant 4","item":"Test Item 4","amount":195.79,"order_status":"CANCELLED","created_at":"2025-12-07T07:37:13.141Z"}|
+|{"order_id":380,"customer_name":"Test Customer 5","restaurant_name":"Test Restaurant 5","item":"Test Item 5","amount":474.56,"order_status":"PLACED","created_at":"2025-12-07T07:37:13.141Z"}   |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+-------------------------------------------
+Batch: 1
+-------------------------------------------
+-------------------------------------------
+Batch: 1
+-------------------------------------------
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+|order_id|customer_name|restaurant_name|item|amount|order_status|created_at|validation_status|
++--------+-------------+---------------+----+------+------------+----------+-----------------+
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|order_id|customer_name  |restaurant_name  |item       |amount|order_status|created_at             |validation_status|date      |
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|376     |Test Customer 1|Test Restaurant 1|Test Item 1|122.19|CANCELLED   |2025-12-07 07:37:13.141|SUCCESS          |2025-12-07|
+|377     |Test Customer 2|Test Restaurant 2|Test Item 2|494.76|PLACED      |2025-12-07 07:37:13.141|SUCCESS          |2025-12-07|
+|378     |Test Customer 3|Test Restaurant 3|Test Item 3|72.82 |CANCELLED   |2025-12-07 07:37:13.141|SUCCESS          |2025-12-07|
+|379     |Test Customer 4|Test Restaurant 4|Test Item 4|195.79|CANCELLED   |2025-12-07 07:37:13.141|SUCCESS          |2025-12-07|
+|380     |Test Customer 5|Test Restaurant 5|Test Item 5|474.56|PLACED      |2025-12-07 07:37:13.141|SUCCESS          |2025-12-07|
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+
+-------------------------------------------
+Batch: 2
+-------------------------------------------
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|value                                                                                                                                                                                           |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|{"order_id":381,"customer_name":"Test Customer 1","restaurant_name":"Test Restaurant 1","item":"Test Item 1","amount":191.76,"order_status":"CANCELLED","created_at":"2025-12-07T07:38:49.765Z"}|
+|{"order_id":382,"customer_name":"Test Customer 2","restaurant_name":"Test Restaurant 2","item":"Test Item 2","amount":85.30,"order_status":"PREPARING","created_at":"2025-12-07T07:38:49.765Z"} |
+|{"order_id":383,"customer_name":"Test Customer 3","restaurant_name":"Test Restaurant 3","item":"Test Item 3","amount":360.06,"order_status":"PREPARING","created_at":"2025-12-07T07:38:49.765Z"}|
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+-------------------------------------------
+Batch: 2
+-------------------------------------------
+-------------------------------------------
+Batch: 2
+-------------------------------------------
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+|order_id|customer_name|restaurant_name|item|amount|order_status|created_at|validation_status|
++--------+-------------+---------------+----+------+------------+----------+-----------------+
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|order_id|customer_name  |restaurant_name  |item       |amount|order_status|created_at             |validation_status|date      |
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|381     |Test Customer 1|Test Restaurant 1|Test Item 1|191.76|CANCELLED   |2025-12-07 07:38:49.765|SUCCESS          |2025-12-07|
+|382     |Test Customer 2|Test Restaurant 2|Test Item 2|85.3  |PREPARING   |2025-12-07 07:38:49.765|SUCCESS          |2025-12-07|
+|383     |Test Customer 3|Test Restaurant 3|Test Item 3|360.06|PREPARING   |2025-12-07 07:38:49.765|SUCCESS          |2025-12-07|
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+
+-------------------------------------------
+Batch: 3
+-------------------------------------------
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|value                                                                                                                                                                                           |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|{"order_id":384,"customer_name":"Test Customer 1","restaurant_name":"Test Restaurant 1","item":"Test Item 1","amount":231.14,"order_status":"PREPARING","created_at":"2025-12-07T07:39:14.108Z"}|
+|{"order_id":385,"customer_name":"Test Customer 2","restaurant_name":"Test Restaurant 2","item":"Test Item 2","amount":123.09,"order_status":"PREPARING","created_at":"2025-12-07T07:39:14.108Z"}|
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+-------------------------------------------
+Batch: 3
+-------------------------------------------
+-------------------------------------------
+Batch: 3
+-------------------------------------------
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+|order_id|customer_name|restaurant_name|item|amount|order_status|created_at|validation_status|
++--------+-------------+---------------+----+------+------------+----------+-----------------+
++--------+-------------+---------------+----+------+------------+----------+-----------------+
+
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|order_id|customer_name  |restaurant_name  |item       |amount|order_status|created_at             |validation_status|date      |
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+|384     |Test Customer 1|Test Restaurant 1|Test Item 1|231.14|PREPARING   |2025-12-07 07:39:14.108|SUCCESS          |2025-12-07|
+|385     |Test Customer 2|Test Restaurant 2|Test Item 2|123.09|PREPARING   |2025-12-07 07:39:14.108|SUCCESS          |2025-12-07|
++--------+---------------+-----------------+-----------+------+------------+-----------------------+-----------------+----------+
+
