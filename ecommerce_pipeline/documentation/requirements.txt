@@ -1,0 +1,23 @@
+# ============================================================================
+# REQUIREMENTS.TXT
+# ============================================================================
+# Python dependencies for CDC Producer and Consumer applications.
+#
+# Install with:
+#   pip install -r requirements.txt
+#
+# Note: Spark and Kafka connectors are provided via spark-submit --packages
+#       and should NOT be in this file.
+# ============================================================================
+
+# YAML configuration file parser
+pyyaml==6.0.1
+
+# PostgreSQL database adapter for Python
+psycopg2-binary==2.9.9
+
+# Python 3.10+ standard library (no external packages needed for core Spark/DataFrame operations)
+
+# Optional: utilities for creating/inspecting Parquet files locally
+pandas==2.2.2
+pyarrow==13.0.0
